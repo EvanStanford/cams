@@ -6,10 +6,82 @@ import (
 	"encoding/csv"
 	"os"
 	"strconv"
+	"math"
 )
 
 type Coordinate struct {
-	x, y float32
+	x, y float64
+}
+
+func CreateCams (leftCamCenter, rightCamCenter Coordinate, rp float64, pathFile, leftOutput, rightOutput string) error {
+	coords, err := ReadCoordsCsv(pathFile)
+	if err != nil {
+		return err
+	}
+	left, right := GetCams(coords, leftCamCenter, rightCamCenter, rp)
+
+	err = WriteCam(left, leftOutput)
+	if (err != nil) {
+		return err
+	}
+	err = WriteCam(right, rightOutput)
+	if (err != nil) {
+		return err
+	}
+	return nil
+}
+
+func GetCams (
+	path []Coordinate, leftCamCenter, rightCamCenter Coordinate, rp float64) (
+	left, right []Coordinate) {
+
+	left = make([]Coordinate, len(path))
+	right = make([]Coordinate, len(path))
+	
+	for i, target := range path {
+		left[i] = ConvertCoord(
+			target,
+			leftCamCenter,
+			len(path),
+			i,
+			rp,
+			false)
+		right[i] = ConvertCoord(
+			target,
+			rightCamCenter,
+			len(path),
+			i,
+			rp,
+			true)
+	}
+	return
+}
+
+//n- total number of coordinates
+//i- index of this coordinate
+//right- is this the right cam?
+func ConvertCoord(target, camCenter Coordinate, n, i int, rp float64, right bool) Coordinate {
+	//rX is correct
+	rx := math.Sqrt(
+		math.Pow(target.x - camCenter.x,2) +
+		math.Pow(target.y - camCenter.y,2)) -
+		rp
+
+	//B is correct
+	B := math.Atan( (target.y - camCenter.y) / (target.x - camCenter.x) )
+
+	Kx := 2.0 * math.Pi * float64(i) / float64(n)
+	if right {
+		Kx += math.Pi
+		Kx *= -1.0
+	}
+	
+	θ := 2.0 * math.Pi - Kx + B
+
+	return Coordinate {
+		x: rx * math.Cos(θ),
+		y: rx * math.Sin(θ),
+	}
 }
 
 func WriteCam(path []Coordinate, outputFile string) error {
@@ -51,15 +123,15 @@ func ReadCoordsCsv(csvFile string) ([]Coordinate, error) {
 	}
 	coords := make([]Coordinate, len(records))
 	for i, record := range records {
-		x, xerr := strconv.ParseFloat(record[0], 32)
+		x, xerr := strconv.ParseFloat(record[0], 64)
 		if xerr != nil {
 			return nil, xerr
 		}
-		y, yerr := strconv.ParseFloat(record[1], 32)
+		y, yerr := strconv.ParseFloat(record[1], 64)
 		if yerr != nil {
 			return nil, yerr
 		}
-		coords[i] = Coordinate{float32(x), float32(y)}
+		coords[i] = Coordinate{x, y}
 	}
 	return coords, nil
 }
@@ -70,8 +142,8 @@ func getPizzaSlice(a, b Coordinate) stl.Triangle {
 		Normal: stl.Vec3{ 0,0,1 },
 		Vertices: [3]stl.Vec3{
 			stl.Vec3{ 0,0,0 },
-			stl.Vec3{ a.x,a.y,0 },
-			stl.Vec3{ b.x,b.y,0 },
+			stl.Vec3{ float32(a.x), float32(a.y), 0 },
+			stl.Vec3{ float32(b.x), float32(b.y), 0 },
 		},
 	}
 }
@@ -81,9 +153,9 @@ func getDirectionalArrow(a, b Coordinate) stl.Triangle {
 	return stl.Triangle {
 		Normal: stl.Vec3{ 0,0,1 },
 		Vertices: [3]stl.Vec3{
-			stl.Vec3{ a.x * 1.2, a.y * 1.2 ,0 },
-			stl.Vec3{ a.x * 1.4, a.y * 1.4 ,0 },
-			stl.Vec3{ b.x * 1.3, b.y * 1.3 ,0 },
+			stl.Vec3{ float32(a.x * 1.2), float32(a.y * 1.2), 0 },
+			stl.Vec3{ float32(a.x * 1.4), float32(a.y * 1.4), 0 },
+			stl.Vec3{ float32(b.x * 1.3), float32(b.y * 1.3), 0 },
 		},
 	}
 }
