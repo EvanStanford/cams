@@ -8,31 +8,17 @@ import (
 	"reflect"
 )
 
-func Test_ConvertCoord(t *testing.T) {
-	result := ConvertCoord(
-		Coordinate{10.0, 11.0},
-		Coordinate{0.0, 0.0},
-		35,
-		22,
-		1.0,
-		false)
-	
-	if math.Abs(result.x - -13.86168) > 0.01 {
-		t.Error("Incorrect x coord")
-	}
-	if math.Abs(result.y - -0.34859) > 0.01 {
-		t.Error("Incorrect y coord")
-	}
-}
-
 func Test_CreateCams(t *testing.T) {
-	inputCsv := "testfiles\\star_target_path.csv"
+	inputCsv := "testfiles\\star_path.csv"
 	leftOutputFile := "testfiles\\left.stl"
 	rightOutputFile := "testfiles\\rigth.stl"
 	leftCorrectFile := "testfiles\\correct_star_left.stl"
 	rightCorrectFile := "testfiles\\correct_star_right.stl"
 
 	err := CreateCams(
+		5,
+		0.045,
+		0.045,
 		Coordinate{-21750, -30536},
 		Coordinate{21750, -30536},
 		7060,
@@ -61,6 +47,38 @@ func Test_CreateCams(t *testing.T) {
 		t.Error("Did not write file")
 	}
 	os.Remove(rightOutputFile)
+}
+
+func Test_Scale(t *testing.T) {
+	input := []Coordinate{
+		Coordinate{ 1.0, 2.0 },
+		Coordinate{ 4.0, 1.0 },
+	}
+	expected := []Coordinate{
+		Coordinate{ 10.0, 4.0 },
+		Coordinate{ 40.0, 2.0 },
+	}
+	result := Scale(input, 10.0, 2.0)
+	if !reflect.DeepEqual(expected, result) {
+		t.Error("Did not scale properly")
+	}
+}
+
+func Test_Interpolate(t *testing.T) {
+	input := []Coordinate{
+		Coordinate{ 10.0, 100.0 },
+		Coordinate{ 20, 200.0 },
+	}
+	expected := []Coordinate{
+		Coordinate{ 10.0, 100.0 },
+		Coordinate{ 15.0, 150.0 },
+		Coordinate{ 20, 200.0 },
+		Coordinate{ 15.0, 150.0 },
+	}
+	result := Interpolate(input, 2)
+	if !reflect.DeepEqual(expected, result) {
+		t.Error("Did not interpolate properly")
+	}
 }
 
 func Test_WriteRealCam(t *testing.T) {
@@ -104,6 +122,23 @@ func Test_WriteSimpleCam(t *testing.T) {
 		t.Error("Did not write file")
 	}
 	os.Remove(outputFile)	
+}
+
+func Test_ConvertCoord(t *testing.T) {
+	result := ConvertCoord(
+		Coordinate{10.0, 11.0},
+		Coordinate{0.0, 0.0},
+		35,
+		22,
+		1.0,
+		false)
+	
+	if math.Abs(result.x - -13.86168) > 0.01 {
+		t.Error("Incorrect x coord")
+	}
+	if math.Abs(result.y - -0.34859) > 0.01 {
+		t.Error("Incorrect y coord")
+	}
 }
 
 func areStlsTheSame(a, b string) (bool, error) {

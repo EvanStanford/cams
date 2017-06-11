@@ -13,12 +13,17 @@ type Coordinate struct {
 	x, y float64
 }
 
-func CreateCams (leftCamCenter, rightCamCenter Coordinate, rp float64, pathFile, leftOutput, rightOutput string) error {
-	coords, err := ReadCoordsCsv(pathFile)
+func CreateCams (numberOfInterpolations int, scaleX, scaleY float64,
+		leftCamCenter, rightCamCenter Coordinate, rp float64,
+		pathFile, leftOutput, rightOutput string) error {
+	rawPath, err := ReadCoordsCsv(pathFile)
 	if err != nil {
 		return err
 	}
-	left, right := GetCams(coords, leftCamCenter, rightCamCenter, rp)
+	scaledPath := Scale(rawPath, scaleX, scaleY)
+	interpolatedPath := Interpolate(scaledPath, numberOfInterpolations)
+
+	left, right := GetCams(interpolatedPath, leftCamCenter, rightCamCenter, rp)
 
 	err = WriteCam(left, leftOutput)
 	if (err != nil) {
@@ -29,6 +34,31 @@ func CreateCams (leftCamCenter, rightCamCenter Coordinate, rp float64, pathFile,
 		return err
 	}
 	return nil
+}
+
+func Scale(path []Coordinate, sx, sy float64) []Coordinate {
+	result := make([]Coordinate, len(path))
+	for i, p := range path {
+		result[i] = Coordinate{ p.x * sx, p.y * sy}
+	}
+	return result
+}
+
+func Interpolate(path []Coordinate, n int) []Coordinate {
+	result := make([]Coordinate, len(path) * n)
+	for i, p := range path {
+		nextp := path[(i + 1) % len(path)]
+		dx := (nextp.x - p.x) / float64(n)
+		dy := (nextp.y - p.y) / float64(n)
+
+		for d := 0; d < n; d++ {
+			result[i*n + d] = Coordinate {
+				x: p.x + dx * float64(d),
+				y: p.y + dy * float64(d),
+			}
+		}
+	}
+	return result
 }
 
 func GetCams (
