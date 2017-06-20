@@ -6,14 +6,15 @@ import (
 	"math"
 	"github.com/hschendel/stl"
 	"reflect"
+	"path/filepath"
 )
 
 func Test_CreateCams(t *testing.T) {
-	inputCsv := "testfiles\\star_path.csv"
-	leftOutputFile := "testfiles\\left.stl"
-	rightOutputFile := "testfiles\\rigth.stl"
-	leftCorrectFile := "testfiles\\correct_star_left.stl"
-	rightCorrectFile := "testfiles\\correct_star_right.stl"
+	inputCsv := filepath.Join("testfiles", "star_path.csv")
+	leftOutputFile := filepath.Join("testfiles", "left.stl")
+	rightOutputFile := filepath.Join("testfiles", "rigth.stl")
+	leftCorrectFile := filepath.Join("testfiles", "correct_star_left.stl")
+	rightCorrectFile := filepath.Join("testfiles", "correct_star_right.stl")
 
 	err := CreateCams(
 		5,
@@ -82,8 +83,8 @@ func Test_Interpolate(t *testing.T) {
 }
 
 func Test_WriteRealCam(t *testing.T) {
-	outputFile := "testfiles\\real_cam.stl"
-	inputCsv := "testfiles\\star_cam_coordinates.csv"
+	outputFile := filepath.Join("testfiles", "real_cam.stl")
+	inputCsv := filepath.Join("testfiles", "star_cam_coordinates.csv")
 
 	coords, err := ReadCoordsCsv(inputCsv)
 	if err != nil {
@@ -101,7 +102,7 @@ func Test_WriteRealCam(t *testing.T) {
 }
 
 func Test_WriteSimpleCam(t *testing.T) {
-	outputFile := "testfiles\\simple_cam.stl"
+	outputFile := filepath.Join("testfiles", "simple_cam.stl")
 
 	var input = []Coordinate{
 		Coordinate{0,5},
@@ -113,7 +114,7 @@ func Test_WriteSimpleCam(t *testing.T) {
 		Coordinate{-5,0},
 		Coordinate{4,4},
 	}
-	
+
 	err := WriteCam(input, outputFile)
 	if err != nil {
 		t.Error(err)
@@ -121,7 +122,7 @@ func Test_WriteSimpleCam(t *testing.T) {
 	if _, fileErr := os.Stat(outputFile); os.IsNotExist(fileErr) {
 		t.Error("Did not write file")
 	}
-	os.Remove(outputFile)	
+	os.Remove(outputFile)
 }
 
 func Test_ConvertCoord(t *testing.T) {
@@ -132,7 +133,7 @@ func Test_ConvertCoord(t *testing.T) {
 		22,
 		1.0,
 		false)
-	
+
 	if math.Abs(result.x - -13.86168) > 0.01 {
 		t.Error("Incorrect x coord")
 	}
