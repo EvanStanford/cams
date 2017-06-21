@@ -51,6 +51,30 @@ func Test_CreateCams(t *testing.T) {
 	os.Remove(rightOutputFile)
 }
 
+func Test_GetCamCenters(t *testing.T) {
+	inputCsv := filepath.Join("testfiles", "star_cam_coordinates.csv")
+
+	path, err := ReadCoordsCsv(inputCsv)
+	if err != nil {
+		t.Error(err)
+	}
+
+	left, right := GetCamCenters(path, 7060.0, 43500.0, 32300)
+
+	if left.X != -21750.0 {
+		t.Errorf("Bad left.X. Expected: %d Actual; %d", -21750.0, left.X)
+	}
+	if right.X != 21750.0 {
+		t.Errorf("Bad right.X. Expected: %d Actual; %d", 21750.0, right.X)
+	}
+	if math.Abs(right.Y - -30536.0) > 1 {
+		t.Errorf("Bad right.Y. Expected: %d Actual; %d", -30536.0, right.Y)
+	}
+	if math.Abs(left.Y - -30536.0) > 1 {
+		t.Errorf("Bad right.Y. Expected: %d Actual; %d", -30536.0, left.Y)
+	}
+}
+
 func Test_Scale(t *testing.T) {
 	input := []Coordinate{
 		Coordinate{ 1.0, 2.0 },

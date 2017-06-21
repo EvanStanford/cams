@@ -36,6 +36,38 @@ func CreateCams (numberOfInterpolations int, scaleX, scaleY float64,
 	return nil
 }
 
+//iteratively find where the cam centers should be to give the correct maxCamRadius
+func GetCamCenters(path []Coordinate, rp, camBoreSpacing, maxCamRadius float64) (Coordinate, Coordinate) {
+	minCamY := -1.0 * maxCamRadius
+	maxCamY := 0.0
+	var leftCenter, rightCenter Coordinate
+	for i := 0; i < 10; i++ {
+		testCamY := (minCamY + maxCamY)/2.0
+		leftCenter = Coordinate{camBoreSpacing/-2.0, testCamY}
+		rightCenter = Coordinate{camBoreSpacing/2.0, testCamY}
+		
+		if maxCamRadius < getMaxRadius(path, leftCenter, rightCenter, rp) {
+			minCamY = testCamY
+		} else {
+			maxCamY = testCamY
+		}
+	}
+	return leftCenter, rightCenter
+}
+
+func getMaxRadius(path []Coordinate, leftCamCenter, rightCamCenter Coordinate, rp float64) float64 {
+	maxR := 0.0
+	for _, target := range path {
+		if r := getRadius(target, leftCamCenter, rp); r > maxR {
+			maxR = r
+		}
+		if r := getRadius(target, rightCamCenter, rp); r > maxR {
+			maxR = r
+		}
+	}
+	return maxR
+}
+
 func Scale(path []Coordinate, sx, sy float64) []Coordinate {
 	result := make([]Coordinate, len(path))
 	for i, p := range path {
@@ -91,13 +123,8 @@ func GetCams (
 //i- index of this coordinate
 //right- is this the right cam?
 func ConvertCoord(target, camCenter Coordinate, n, i int, rp float64, right bool) Coordinate {
-	//rX is correct
-	rx := math.Sqrt(
-		math.Pow(target.X - camCenter.X,2) +
-		math.Pow(target.Y - camCenter.Y,2)) -
-		rp
+	rx := getRadius(target, camCenter, rp)
 
-	//B is correct
 	B := math.Atan( (target.Y - camCenter.Y) / (target.X - camCenter.X) )
 
 	Kx := 2.0 * math.Pi * float64(i) / float64(n)
@@ -112,6 +139,13 @@ func ConvertCoord(target, camCenter Coordinate, n, i int, rp float64, right bool
 		X: rx * math.Cos(θ),
 		Y: rx * math.Sin(θ),
 	}
+}
+
+func getRadius(target, camCenter Coordinate, rp float64) float64 {
+	return math.Sqrt(
+		math.Pow(target.X - camCenter.X,2) +
+		math.Pow(target.Y - camCenter.Y,2)) -
+		rp
 }
 
 func WriteCam(path []Coordinate, outputFile string) error {
