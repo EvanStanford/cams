@@ -15,6 +15,7 @@ func Test_CreateCams(t *testing.T) {
 	leftCorrectFile := "testfiles\\correct_star_left.stl"
 	rightCorrectFile := "testfiles\\correct_star_right.stl"
 
+	//NOTE: My examples output models 1000X larger because Trimble Sketchup has rounding bugs with small objects
 	err := CreateCams(
 		5,
 		0.045,
@@ -133,11 +134,11 @@ func Test_ConvertCoord(t *testing.T) {
 		1.0,
 		false)
 	
-	if math.Abs(result.x - -13.86168) > 0.01 {
-		t.Error("Incorrect x coord")
+	if math.Abs(result.X - -13.86168) > 0.01 {
+		t.Error("Incorrect X coord")
 	}
-	if math.Abs(result.y - -0.34859) > 0.01 {
-		t.Error("Incorrect y coord")
+	if math.Abs(result.Y - -0.34859) > 0.01 {
+		t.Error("Incorrect Y coord")
 	}
 }
 
