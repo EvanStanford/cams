@@ -52,7 +52,7 @@ func Test_CreateCams(t *testing.T) {
 }
 
 func Test_GetCamCenters(t *testing.T) {
-	inputCsv := filepath.Join("testfiles", "star_cam_coordinates.csv")
+	inputCsv := filepath.Join("testfiles", "star_path_scaled.csv")
 
 	path, err := ReadCoordsCsv(inputCsv)
 	if err != nil {
@@ -62,16 +62,16 @@ func Test_GetCamCenters(t *testing.T) {
 	left, right := GetCamCenters(path, 7060.0, 43500.0, 32300)
 
 	if left.X != -21750.0 {
-		t.Errorf("Bad left.X. Expected: %d Actual; %d", -21750.0, left.X)
+		t.Errorf("Bad left.X. Expected: %g Actual; %g", -21750.0, left.X)
 	}
 	if right.X != 21750.0 {
-		t.Errorf("Bad right.X. Expected: %d Actual; %d", 21750.0, right.X)
+		t.Errorf("Bad right.X. Expected: %g Actual; %g", 21750.0, right.X)
 	}
-	if math.Abs(right.Y - -30536.0) > 1 {
-		t.Errorf("Bad right.Y. Expected: %d Actual; %d", -30536.0, right.Y)
+	if math.Abs(right.Y - -30105.0) > 1 {
+		t.Errorf("Bad right.Y. Expected: %g Actual; %g", -30105.0, right.Y)
 	}
-	if math.Abs(left.Y - -30536.0) > 1 {
-		t.Errorf("Bad right.Y. Expected: %d Actual; %d", -30536.0, left.Y)
+	if math.Abs(left.Y - -30105.0) > 1 {
+		t.Errorf("Bad right.Y. Expected: %g Actual; %g", -30105.0, left.Y)
 	}
 }
 

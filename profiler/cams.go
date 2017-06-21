@@ -41,11 +41,10 @@ func GetCamCenters(path []Coordinate, rp, camBoreSpacing, maxCamRadius float64) 
 	minCamY := -1.0 * maxCamRadius
 	maxCamY := 0.0
 	var leftCenter, rightCenter Coordinate
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 15; i++ {
 		testCamY := (minCamY + maxCamY)/2.0
 		leftCenter = Coordinate{camBoreSpacing/-2.0, testCamY}
 		rightCenter = Coordinate{camBoreSpacing/2.0, testCamY}
-		
 		if maxCamRadius < getMaxRadius(path, leftCenter, rightCenter, rp) {
 			minCamY = testCamY
 		} else {
