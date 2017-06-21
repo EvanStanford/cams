@@ -29,7 +29,7 @@ go install
 cd ../main/
 go install
 cd ../../../../../bin/
-main.exe ../src/github.com/EvanStanford/cams/profiler/testfiles/star_path.csv
+main.exe ../src/github.com/EvanStanford/cams/profiler/testfiles/star_path.csv 0.045
 ls out/star_path/
 ```
 

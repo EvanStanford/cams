@@ -13,9 +13,8 @@ type Coordinate struct {
 	X, Y float64
 }
 
-func CreateCams (numberOfInterpolations int, scaleX, scaleY float64,
-		leftCamCenter, rightCamCenter Coordinate, rp float64,
-		pathFile, leftOutput, rightOutput string) error {
+func CreateCams (pathFile, leftOutput, rightOutput string,
+		numberOfInterpolations int, scaleX, scaleY, camBoreSpacing, maxCamRadius, rp float64) error {
 	rawPath, err := ReadCoordsCsv(pathFile)
 	if err != nil {
 		return err
@@ -23,13 +22,15 @@ func CreateCams (numberOfInterpolations int, scaleX, scaleY float64,
 	scaledPath := Scale(rawPath, scaleX, scaleY)
 	interpolatedPath := Interpolate(scaledPath, numberOfInterpolations)
 
-	left, right := GetCams(interpolatedPath, leftCamCenter, rightCamCenter, rp)
+	leftCenter, rightCenter := GetCamCenters(interpolatedPath, rp, camBoreSpacing, maxCamRadius)
 
-	err = WriteCam(left, leftOutput)
+	leftCam, rightCam := GetCams(interpolatedPath, leftCenter, rightCenter, rp)
+
+	err = WriteCam(leftCam, leftOutput)
 	if (err != nil) {
 		return err
 	}
-	err = WriteCam(right, rightOutput)
+	err = WriteCam(rightCam, rightOutput)
 	if (err != nil) {
 		return err
 	}

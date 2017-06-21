@@ -11,27 +11,33 @@ import (
 
 func Test_CreateCams(t *testing.T) {
 	inputCsv := filepath.Join("testfiles", "star_path.csv")
-	leftOutputFile := filepath.Join("testfiles", "left.stl")
-	rightOutputFile := filepath.Join("testfiles", "rigth.stl")
+	leftOutputFile := filepath.Join("testfiles", "test_left.stl")
+	rightOutputFile := filepath.Join("testfiles", "test_right.stl")
 	leftCorrectFile := filepath.Join("testfiles", "correct_star_left.stl")
 	rightCorrectFile := filepath.Join("testfiles", "correct_star_right.stl")
 
 	//NOTE: My examples output models 1000X larger because Trimble Sketchup has rounding bugs with small objects
 	err := CreateCams(
-		5,
-		0.045,
-		0.045,
-		Coordinate{-21750, -30536},
-		Coordinate{21750, -30536},
-		7060,
 		inputCsv,
 		leftOutputFile,
 		rightOutputFile,
+		5,
+		0.045,
+		0.045,
+		43500,
+		32300,
+		7060,
 	)
 	if err != nil {
 		t.Error(err)
 	}
 
+	if _, fileErr := os.Stat(leftOutputFile); os.IsNotExist(fileErr) {
+		t.Error("Did not write left file")
+	}
+	if _, fileErr := os.Stat(rightOutputFile); os.IsNotExist(fileErr) {
+		t.Error("Did not write right file")
+	}
 	if same, sameerr := areStlsTheSame(leftCorrectFile, leftOutputFile);
 		!same || sameerr != nil {
 		t.Error("Left cam wrong")
@@ -41,13 +47,7 @@ func Test_CreateCams(t *testing.T) {
 		t.Error("Right cam wrong")
 	}
 
-	if _, fileErr := os.Stat(leftOutputFile); os.IsNotExist(fileErr) {
-		t.Error("Did not write file")
-	}
 	os.Remove(leftOutputFile)
-	if _, fileErr := os.Stat(rightOutputFile); os.IsNotExist(fileErr) {
-		t.Error("Did not write file")
-	}
 	os.Remove(rightOutputFile)
 }
 

@@ -14,9 +14,10 @@ func basename (filename string) string {
 func main() {
 	args := os.Args[1:]
 
-	inputCsv := args[0]
+	inputPath := args[0]
+	scale := strconv.ParseFloat(args[1], 64)
 
-	base := basename(filepath.Base(inputCsv))
+	base := basename(filepath.Base(inputPath))
 
 	outputStlL := filepath.Join("out", base, base + "-L.stl")
 	outputStlR := filepath.Join("out", base, base + "-R.stl")
@@ -24,13 +25,14 @@ func main() {
 	os.MkdirAll(filepath.Join("out", base), 0755)
 
 	cams.CreateCams(
-		5,
-		0.045,
-		0.045,
-		cams.Coordinate{-21750, -30536},
-		cams.Coordinate{21750, -30536},
-		7060,
-		inputCsv,
+		inputPath, //note input path must be centered around Y axis
 		outputStlL,
-		outputStlR)
+		outputStlR,
+		5,
+		scale,
+		scale,
+		43500, //Contant: distance between cam axels, center to center
+		32300, //Contant: max radius of cam. If this was any larger the cams would hit each other
+		7060, //Laser pen radius
+	)
 }
