@@ -4,14 +4,11 @@ Generates cam profiles (.stl) for the mechanical laser show
 
 Check out these for more info:
 
-https://www.youtube.com/watch?v=_dtBUiaAqRE
+[<img src="https://raw.githubusercontent.com/EvanStanford/cams/master/screenshot.png" width="650" />](https://www.youtube.com/watch?v=_dtBUiaAqRE)
 
 https://hackaday.io/project/25447-mechanical-laser-show
 
 https://www.thingiverse.com/thing:2383299
-
-
-
 
 # usage
 
@@ -28,8 +25,7 @@ go test
 go install
 cd ../main/
 go install
-cd ../../../../../bin/
-main.exe ../src/github.com/EvanStanford/cams/profiler/testfiles/star_path.csv 0.045
+../../../../../bin/main.exe ../profiler/testfiles/star_path.csv 0.045
 ls out/star_path/
 ```
 
