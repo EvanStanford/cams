@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"github.com/EvanStanford/cams/profiler"
+	"strconv"
+	"fmt"
 )
 
 func basename (filename string) string {
@@ -12,10 +14,17 @@ func basename (filename string) string {
 }
 
 func main() {
+	if len(os.Args) != 3 {
+		fmt.Println("Incorrect usage. Correct usage: main.exe file/path.csv 0.045")
+		return
+	}
 	args := os.Args[1:]
-
 	inputPath := args[0]
-	scale := strconv.ParseFloat(args[1], 64)
+	scale, err := strconv.ParseFloat(args[1], 64)
+	if err != nil {
+		fmt.Println("Incorrect usage. Could not parse scale. Correct usage: main.exe file/path.csv 0.045")
+		return
+	}
 
 	base := basename(filepath.Base(inputPath))
 
