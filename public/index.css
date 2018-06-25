@@ -1,0 +1,37 @@
+#mycanvas {
+    display: table;
+    margin-right: auto;
+    margin-left: auto;
+    width: 50%;
+    height: 400px;
+    border: 1px solid black;
+}
+
+#cams{
+    text-align:center;
+}
+#leftCamCanvas {
+    display:inline;
+    /*margin-right: auto;*/
+    /*margin-left: auto;*/
+    height: 400px;
+    width: 400px;
+    border: 1px solid black;
+}
+#rightCamCanvas {
+    display:inline;
+    /*margin-right: auto;*/
+    /*margin-left: auto;*/
+    height: 400px;
+    width: 400px;
+    border: 1px solid black;
+}
+
+#convert {
+    display: table;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
