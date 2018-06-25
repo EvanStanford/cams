@@ -1,6 +1,6 @@
 # cams
-Rewritten code that generates cam profiles (.stl) for the mechanical laser show in your browser (offline!)
 
+Rewritten code that generates cam profiles (.stl) for the mechanical laser show in your browser (offline!)
 
 Check out these for more info:
 
