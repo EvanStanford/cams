@@ -1,6 +1,6 @@
 # cams
-Generates cam profiles (.stl) for the mechanical laser show
 
+Rewritten code that generates cam profiles (.stl) for the mechanical laser show in your browser (offline!)
 
 Check out these for more info:
 
@@ -13,20 +13,5 @@ https://www.thingiverse.com/thing:2383299
 # usage
 
 ```
-#Install go, git
-mkdir go/src/github.com/EvanStanford/
-cd go/src/github.com/EvanStanford/
-#Add environment variable GOPATH to go directory
-git clone https://github.com/EvanStanford/cams.git
-cd cams/profiler/
-go get
-go test
-#PASS
-go install
-cd ../main/
-go install
-../../../../../bin/main.exe ../profiler/testfiles/star_path.csv 0.045
-ls out/star_path/
+Open ./public/index.html with your browser
 ```
-
-
